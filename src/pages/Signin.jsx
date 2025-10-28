@@ -3,7 +3,7 @@ import { Card } from "../components/Card";
 import { Input } from "../components/Input";
 import { signin } from "../utils/auth";
 import { useState } from "react";
-import { ProfileStorage } from "../utils/profileStorage";
+import { setUserCredentialsOnStorage } from "../utils/storageForCredentials";
 import "../index.css";
 
 export function Signin({ onSigninSuccessed, onClickSignupButton }) {
@@ -19,19 +19,22 @@ export function Signin({ onSigninSuccessed, onClickSignupButton }) {
   const onChangePassword = (event) => {
     setPassword(event.target.value);
   };
-  
+
   const onSignin = async () => {
     setIsLoading(true);
+    let response;
 
     try {
-        const response = await signin(email, password);
-        localStorage.setItem("accessToken", response.accessToken);
-        ProfileStorage.getSharedInstance().setProfile(response.user);
-    } catch(error) {
-        alert(error);
+      response = await signin(email, password);
+      setUserCredentialsOnStorage(response.accessToken, response.user);
+    } catch (error) {
+      alert(error);
     } finally {
-        setIsLoading(false);
-        onSigninSuccessed();
+      setIsLoading(false);
+    }
+
+    if (response) {
+      onSigninSuccessed();
     }
   };
 
@@ -44,10 +47,18 @@ export function Signin({ onSigninSuccessed, onClickSignupButton }) {
         type="password"
         onChange={onChangePassword}
       />
-      <Button children={signinPhrase} onClick={onSignin} isButtonDisabled={isLoading}></Button>
+      <Button
+        children={signinPhrase}
+        onClick={onSignin}
+        isButtonDisabled={isLoading}
+      ></Button>
       <p className="text-center text-sm text-gray-600">
         Don’t have an account?{" "}
-        <button onClick={onClickSignupButton} className="text-blue-500" disabled={isLoading}>
+        <button
+          onClick={onClickSignupButton}
+          className="text-blue-500"
+          disabled={isLoading}
+        >
           Create one
         </button>
       </p>
