@@ -5,6 +5,9 @@ import { Input } from "./components/Input";
 import { Select } from "./components/Select";
 import { Plus, Edit, Trash, LogOut } from "lucide-react";
 import { Signin } from "./pages/Signin";
+import { Signup } from "./pages/Signup";
+import { Home } from "./pages/Home";
+import "./index.css";
 
 function App() {
   const [page, setPage] = useState("signin");
@@ -20,67 +23,16 @@ function App() {
       )}
 
       {page === "signup" && (
-        <Card>
-          <h1 className="text-2xl font-bold text-center">Sign Up</h1>
-          <Input placeholder="Username" />
-          <Input placeholder="Email" />
-          <Input placeholder="Password" type="password" />
-          <Button className="w-full">Create Account</Button>
-          <p className="text-center text-sm text-gray-600">
-            Already have an account?{" "}
-            <button onClick={() => setPage("signin")} className="text-blue-500">
-              Sign in
-            </button>
-          </p>
-        </Card>
+        <Signup
+          onSignupSuccessed={ () => { setPage("home") } }
+          onClickSigninButton={ () => { setPage("signin") } }
+        ></Signup>
       )}
 
       {page === "home" && (
-        <div className="w-full max-w-2xl space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold">Welcome, User!</h2>
-            <Button variant="outline" size="sm">
-              <LogOut className="w-4 h-4 inline-block mr-1" />
-              Logout
-            </Button>
-          </div>
-          <div className="flex gap-2">
-            <Input placeholder="Filter by Date" type="date" />
-            <Select
-              placeholder="Filter by Category"
-              options={["Food", "Transport"]}
-            />
-            <Button onClick={() => setPage("new-expense")}>
-              <Plus className="w-4 h-4 inline-block mr-1" />
-              New
-            </Button>
-          </div>
-          <Card>
-            {[1, 2, 3].map((expense) => (
-              <div
-                key={expense}
-                className="flex justify-between items-center border-b pb-2"
-              >
-                <div>
-                  <p className="font-medium">Expense {expense}</p>
-                  <p className="text-sm text-gray-500">$100 - Food</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setPage("edit-expense")}
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Trash className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </Card>
-        </div>
+        <Home
+          onSignoutSuccessed={ () => { setPage("signin") } }
+        ></Home>
       )}
 
       {(page === "new-expense" || page === "edit-expense") && (
